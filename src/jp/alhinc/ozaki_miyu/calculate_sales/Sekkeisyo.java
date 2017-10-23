@@ -19,8 +19,7 @@ public class Sekkeisyo {
 
 	public static void main(String[] args) throws IOException {
 
-//支店定義ファイル読み込み1
-
+		//支店定義ファイル読み込み1
 		HashMap<String,String> branchlst = new HashMap<String,String>();
 		HashMap<String,Long>branchsale = new HashMap<String,Long>();
 		BufferedReader br;
@@ -28,14 +27,13 @@ public class Sekkeisyo {
 		br =null;
 		fr = null;
 
-//コマンドライン引数が渡されていない場合
+		//コマンドライン引数が渡されていない場合
 		if(args[0] == null){
 			System.out.println("予期せぬエラーが発生しました");
 			return;
 		}
 
-//コマンドライン引数が二つ以上あった場合
-
+		//コマンドライン引数が二つ以上あった場合
 		if(args.length != 1){
 			System.out.println("予期せぬエラーが発生しました");
 			return;
@@ -58,10 +56,6 @@ public class Sekkeisyo {
 
 					String items[] = fileLine.split(",",-1);
 
-					if(!items[0].matches("^[0-9]*$")){
-						System.out.println("支店定義ファイルのフォーマットが不正です");
-						return;
-					}
 					if(!items[0].matches("^\\d{3}$") || (items.length != 2)){
 						System.out.println("支店定義ファイルのフォーマットが不正です");
 						return;
@@ -85,8 +79,7 @@ public class Sekkeisyo {
 			}
 		}
 
-//商品定義ファイル読み込み
-
+		//商品定義ファイル読み込み
 		HashMap<String,String> commoditylst = new HashMap<String,String>();
 		HashMap<String,Long>commoditysale = new HashMap<String,Long>();
 
@@ -105,11 +98,6 @@ public class Sekkeisyo {
 				while((fileLine = br.readLine())!= null){
 
 					String items[] = fileLine.split(",",-1);
-
-					if(!items[0].matches("^[0-9A-Z]+$")){
-						System.out.println("商品定義ファイルのフォーマットが不正です");
-						return;
-					}
 
 					if(!items[0].matches("\\w{8}$") || (items.length != 2)){
 						System.out.println("商品定義ファイルのフォーマットが不正です");
@@ -134,8 +122,7 @@ public class Sekkeisyo {
 			}
 		}
 
-//00000001.rcd 連番チェック
-
+		//00000001.rcd 連番チェック
 		ArrayList<File> rcdFiles = new ArrayList<File>();
 		ArrayList<String> rcdNumber = new ArrayList<String>();
 		File dir = new File(args[0]);
@@ -170,8 +157,7 @@ public class Sekkeisyo {
 
 			}
 
-//集計 & エラーチェック
-
+			//集計 & エラーチェック
 			for (int i = 0; i < rcdFiles.size(); i++){
 
 				fr = new FileReader(rcdFiles.get(i));
@@ -186,24 +172,26 @@ public class Sekkeisyo {
 				}
 				//行数チェック
 				if(rcdArray.size() != 3){
-					System.out.println(rcdArray.get(0) +  "のフォーマットが不正です");
+					System.out.println(rcdLst[i] +  "のフォーマットが不正です");
 					return;
 				}
 
 
-				if(rcdArray.get(2).matches(" [^0-9]")) {
-					System.out.println(rcdArray.get(2) + "のフォーマットが不正です");
+				//修正点！！！
+				//金額のほうも数字以外だとエラーを出す
+				if(!rcdArray.get(2).matches("^[0-9]*$")) {
+					System.out.println(rcdLst[i] + "のフォーマットが不正です");
 					return;
 				}
 
 				//売り上げファイルの支店コードが存在しない
 				if(!branchsale.containsKey(rcdArray.get(0))){
-					System.out.println((rcdArray.get(0)) + ".rcdの支店コードが不正です");
+					System.out.println(rcdLst[i] + ".rcdの支店コードが不正です");
 					return;
 				}
 				//売り上げファイルの商品コードが存在しない
 				if(!commoditysale.containsKey(rcdArray.get(1))){
-					System.out.println((rcdArray.get(1)) + ".rcdの商品コードが不正です");
+					System.out.println(rcdLst[i] + ".rcdの商品コードが不正です");
 					return;
 				}
 
