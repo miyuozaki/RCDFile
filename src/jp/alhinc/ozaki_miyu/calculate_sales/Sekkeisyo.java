@@ -19,10 +19,7 @@ public class Sekkeisyo {
 
 	public static void main(String[] args) throws IOException {
 
-
-
 //支店定義ファイル読み込み
-
 
 		HashMap<String,String> branchlst = new HashMap<String,String>();
 		HashMap<String,Long>branchsale = new HashMap<String,Long>();
@@ -48,7 +45,6 @@ public class Sekkeisyo {
 
 					String items[] = fileLine.split(",",-1);
 
-
 					if(!items[0].matches("^\\d{3}$") || (items.length != 2)){
 						System.out.println("支店定義ファイルのフォーマットが不正です");
 						return;
@@ -71,11 +67,7 @@ public class Sekkeisyo {
 			}
 		}
 
-
-
 //商品定義ファイル読み込み
-
-
 
 		HashMap<String,String> commoditylst = new HashMap<String,String>();
 		HashMap<String,Long>commoditysale = new HashMap<String,Long>();
@@ -100,10 +92,8 @@ public class Sekkeisyo {
 						System.out.println("商品定義ファイルのフォーマットが不正です");
 						return;
 					}
-
 					commoditylst.put(items[0],items[1]);
 					commoditysale.put(items[0], 0L);
-
 				}
 			}
 
@@ -121,7 +111,6 @@ public class Sekkeisyo {
 			}
 		}
 
-
 //00000001.rcd 連番チェック
 
 		ArrayList<File> rcdFiles = new ArrayList<File>();
@@ -132,7 +121,6 @@ public class Sekkeisyo {
 		FileWriter fw;
 		BufferedWriter bw;
 		bw = null;
-
 
 		try{
 
@@ -158,7 +146,7 @@ public class Sekkeisyo {
 				}
 			}
 
-//集計
+//集計 & エラーチェック
 
 			for (int i = 0; i < rcdFiles.size(); i++){
 
@@ -187,12 +175,10 @@ public class Sekkeisyo {
 					System.out.println(rcdArray.get(1) + "のファイルが存在しません");
 				}
 
-
 				if(rcdArray.get(2).matches(" [^0-9]")) {
 					System.out.println(rcdArray.get(2) + "のフォーマットが不正です");
 					return;
 				}
-
 
 				//足し算
 				Long l = Long.parseLong(rcdArray.get(2));
@@ -205,7 +191,6 @@ public class Sekkeisyo {
 				commoditysale.put(rcdArray.get(1),cAns);
 
 
-
 				if(10 < String.valueOf(bAns).length()){
 					System.out.println("合計金額が10桁を超えました");
 					return;
@@ -215,7 +200,6 @@ public class Sekkeisyo {
 					System.out.println("合計金額が10桁を超えました");
 					return;
 				}
-
 			}
 
 		}catch(FileNotFoundException e){
@@ -232,10 +216,9 @@ public class Sekkeisyo {
 			}
 		}
 
+//ファイル書き込み
 
 		try{
-
-			File bFile  = new File(args[0],"branch.out");
 
 			List<Entry<String,Long>> entriesBra =
 					new ArrayList<Entry<String,Long>>(branchsale.entrySet());
@@ -246,16 +229,31 @@ public class Sekkeisyo {
 				return ((Long)entry2.getValue()).compareTo((Long)entry1.getValue());
 			}});
 
+			File bFile  = new File(args[0],"branch.out");
 
 			fw = new FileWriter(bFile);
 			bw = new BufferedWriter(fw);
 
-
 			for (Entry<String,Long> s : entriesBra) {
 				bw.write(s.getKey() + "," + branchlst.get(s.getKey()) + "," + s.getValue() + "\n");
+				System.out.println(branchlst.get(s.getKey()) + "," + s.getValue());
 			}
 
+		}catch(FileNotFoundException e){
+			System.out.println("ファイルが存在しません");
+			return;
+		}finally{
+			try {
+				if (bw != null) {
+					bw.close();
+				}
+			} catch (IOException e) {
+				System.out.println("予期せぬエラーが発生しました");
+				return;
+			}
+		}
 
+		try{
 
 			List<Entry<String,Long>> entriesCom =
 					new ArrayList<Entry<String,Long>>(commoditysale.entrySet());
@@ -266,18 +264,14 @@ public class Sekkeisyo {
 				return ((Long)entry2.getValue()).compareTo((Long)entry1.getValue());
 			}});
 
-
 			File cFile  = new File(args[0],"commodity.out");
-
 
 			fw = new FileWriter(cFile);
 			bw = new BufferedWriter(fw);
 
-			//System.out.println(entriesCom.get(0));
-
 			for (Entry<String,Long> s : entriesCom) {
 				bw.write(s.getKey() + ","  + commoditylst.get(s.getKey()) + ","  + s.getValue() + "\n");
-				//System.out.println(entriesCom.get(0));
+
 			}
 
 		}catch(FileNotFoundException e){
