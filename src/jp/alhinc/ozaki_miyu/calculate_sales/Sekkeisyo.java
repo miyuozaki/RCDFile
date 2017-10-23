@@ -42,7 +42,10 @@ public class Sekkeisyo {
 		try{
 
 			File file  = new File(args[0], "branch.lst");
-
+			if (!file.exists()) {
+				System.out.println("支店定義ファイルが存在しません");
+				return;
+			}
 			fr = new FileReader(file);
 			br = new BufferedReader(fr);
 			String fileLine;
@@ -172,26 +175,25 @@ public class Sekkeisyo {
 				}
 				//行数チェック
 				if(rcdArray.size() != 3){
-					System.out.println(rcdLst[i] +  "のフォーマットが不正です");
+					System.out.println(rcdLst[i].getName() +  "のフォーマットが不正です");
 					return;
 				}
 
-
 				//修正点！！！
 				//金額のほうも数字以外だとエラーを出す
-				if(!rcdArray.get(2).matches("^[0-9]*$")) {
-					System.out.println(rcdLst[i] + "のフォーマットが不正です");
+				if(!rcdArray.get(2).matches("^[0-9]+$")) {
+					System.out.println(rcdLst[i].getName() + "のフォーマットが不正です");
 					return;
 				}
 
 				//売り上げファイルの支店コードが存在しない
 				if(!branchsale.containsKey(rcdArray.get(0))){
-					System.out.println(rcdLst[i] + ".rcdの支店コードが不正です");
+					System.out.println(rcdLst[i].getName() + ".rcdの支店コードが不正です");
 					return;
 				}
 				//売り上げファイルの商品コードが存在しない
 				if(!commoditysale.containsKey(rcdArray.get(1))){
-					System.out.println(rcdLst[i] + ".rcdの商品コードが不正です");
+					System.out.println(rcdLst[i].getName() + ".rcdの商品コードが不正です");
 					return;
 				}
 
