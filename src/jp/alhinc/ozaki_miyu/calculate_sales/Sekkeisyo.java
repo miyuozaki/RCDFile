@@ -27,14 +27,14 @@ public class Sekkeisyo {
 		br =null;
 		fr = null;
 
-		//コマンドライン引数が渡されていない場合
-		if(args[0] == null){
+		//コマンドライン引数が二つ以上あった場合
+		if(args.length != 1){
 			System.out.println("予期せぬエラーが発生しました");
 			return;
 		}
 
-		//コマンドライン引数が二つ以上あった場合
-		if(args.length != 1){
+		//コマンドライン引数が渡されていない場合
+		if(args[0] == null){
 			System.out.println("予期せぬエラーが発生しました");
 			return;
 		}
@@ -183,18 +183,18 @@ public class Sekkeisyo {
 				//修正点！！！
 				//金額のほうも数字以外だとエラーを出す
 				if(!rcdArray.get(2).matches("^[0-9]+$")) {
-					System.out.println(rcdLst[i].getName() + "のフォーマットが不正です");
+					System.out.println("予期せぬエラーが発生しました");
 					return;
 				}
 
 				//売り上げファイルの支店コードが存在しない
 				if(!branchsale.containsKey(rcdArray.get(0))){
-					System.out.println(rcdLst[i].getName() + ".rcdの支店コードが不正です");
+					System.out.println(rcdLst[i].getName() + "の支店コードが不正です");
 					return;
 				}
 				//売り上げファイルの商品コードが存在しない
 				if(!commoditysale.containsKey(rcdArray.get(1))){
-					System.out.println(rcdLst[i].getName() + ".rcdの商品コードが不正です");
+					System.out.println(rcdLst[i].getName() + "の商品コードが不正です");
 					return;
 				}
 
@@ -218,8 +218,6 @@ public class Sekkeisyo {
 					System.out.println("合計金額が10桁を超えました");
 					return;
 				}
-
-
 			}
 
 		}catch(FileNotFoundException e){
