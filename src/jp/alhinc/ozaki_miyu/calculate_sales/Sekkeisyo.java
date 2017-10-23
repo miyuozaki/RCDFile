@@ -28,6 +28,19 @@ public class Sekkeisyo {
 		br =null;
 		fr = null;
 
+//コマンドライン引数が渡されていない場合
+		if(args[0] == null){
+			System.out.println("予期せぬエラーが発生しました");
+			return;
+		}
+
+//コマンドライン引数が二つ以上あった場合
+
+		if(args.length != 1){
+			System.out.println("予期せぬエラーが発生しました");
+			return;
+		}
+
 		try{
 
 			File file  = new File(args[0], "branch.lst");
@@ -45,10 +58,15 @@ public class Sekkeisyo {
 
 					String items[] = fileLine.split(",",-1);
 
+					if(!items[0].matches("^[0-9]*$")){
+						System.out.println("支店定義ファイルのフォーマットが不正です");
+						return;
+					}
 					if(!items[0].matches("^\\d{3}$") || (items.length != 2)){
 						System.out.println("支店定義ファイルのフォーマットが不正です");
 						return;
 					}
+
 					branchlst.put(items[0],items[1]);
 					branchsale.put(items[0],0L);
 				}
@@ -87,6 +105,11 @@ public class Sekkeisyo {
 				while((fileLine = br.readLine())!= null){
 
 					String items[] = fileLine.split(",",-1);
+
+					if(!items[0].matches("^[0-9A-Z]+$")){
+						System.out.println("商品定義ファイルのフォーマットが不正です");
+						return;
+					}
 
 					if(!items[0].matches("\\w{8}$") || (items.length != 2)){
 						System.out.println("商品定義ファイルのフォーマットが不正です");
@@ -144,6 +167,7 @@ public class Sekkeisyo {
 					System.out.println("売上ファイル名が連番になっていません");
 					return;
 				}
+
 			}
 
 //集計 & エラーチェック
@@ -165,18 +189,21 @@ public class Sekkeisyo {
 					System.out.println(rcdArray.get(0) +  "のフォーマットが不正です");
 					return;
 				}
-				//存在確認
-				if(!branchsale.containsKey(rcdArray.get(0))){
-					System.out.println(rcdArray.get(0) +  "のファイルが存在しません");
-					return;
-				}
 
-				if(!commoditysale.containsKey(rcdArray.get(1))){
-					System.out.println(rcdArray.get(1) + "のファイルが存在しません");
-				}
 
 				if(rcdArray.get(2).matches(" [^0-9]")) {
 					System.out.println(rcdArray.get(2) + "のフォーマットが不正です");
+					return;
+				}
+
+				//売り上げファイルの支店コードが存在しない
+				if(!branchsale.containsKey(rcdArray.get(0))){
+					System.out.println((rcdArray.get(0)) + ".rcdの支店コードが不正です");
+					return;
+				}
+				//売り上げファイルの商品コードが存在しない
+				if(!commoditysale.containsKey(rcdArray.get(1))){
+					System.out.println((rcdArray.get(1)) + ".rcdの商品コードが不正です");
 					return;
 				}
 
@@ -190,7 +217,7 @@ public class Sekkeisyo {
 				Long cAns = l2 + commoditysale.get(rcdArray.get(1));
 				commoditysale.put(rcdArray.get(1),cAns);
 
-
+				//10桁以上エラー
 				if(10 < String.valueOf(bAns).length()){
 					System.out.println("合計金額が10桁を超えました");
 					return;
@@ -200,6 +227,8 @@ public class Sekkeisyo {
 					System.out.println("合計金額が10桁を超えました");
 					return;
 				}
+
+
 			}
 
 		}catch(FileNotFoundException e){
@@ -236,11 +265,10 @@ public class Sekkeisyo {
 
 			for (Entry<String,Long> s : entriesBra) {
 				bw.write(s.getKey() + "," + branchlst.get(s.getKey()) + "," + s.getValue() + "\n");
-				System.out.println(branchlst.get(s.getKey()) + "," + s.getValue());
 			}
 
 		}catch(FileNotFoundException e){
-			System.out.println("ファイルが存在しません");
+			System.out.println("予期せぬエラーが発生しました");
 			return;
 		}finally{
 			try {
@@ -275,7 +303,7 @@ public class Sekkeisyo {
 			}
 
 		}catch(FileNotFoundException e){
-			System.out.println("ファイルが存在しません");
+			System.out.println("予期せぬエラーが発生しました");
 			return;
 		}finally{
 			try {
