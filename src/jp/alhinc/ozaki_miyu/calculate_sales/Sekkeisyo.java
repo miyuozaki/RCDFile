@@ -113,6 +113,7 @@ public class Sekkeisyo {
 
 		}catch(FileNotFoundException e){
 			System.out.println("商品定義ファイルが存在しません");
+			return;
 		}finally{
 
 			try {
