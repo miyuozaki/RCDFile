@@ -19,7 +19,7 @@ public class Sekkeisyo {
 
 	public static void main(String[] args) throws IOException {
 
-//支店定義ファイル読み込み
+//支店定義ファイル読み込み1
 
 		HashMap<String,String> branchlst = new HashMap<String,String>();
 		HashMap<String,Long>branchsale = new HashMap<String,Long>();
