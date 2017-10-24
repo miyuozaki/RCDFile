@@ -65,14 +65,14 @@ public class Sekkeisyo {
 
 	//入力メソッド
 	public static boolean fileIn(String dirPath,String fileName,String format,
-			String eM,HashMap<String,String>inName,HashMap<String,Long>inSale){
+			String definition,HashMap<String,String>inName,HashMap<String,Long>inSale){
 
 		File file = new File(dirPath,fileName);
 		FileReader fr = null;
 		BufferedReader br = null;
 
 		if (!file.exists()) {
-			System.out.println("支店定義ファイルが存在しません");
+			System.out.println(definition + "定義ファイルが存在しません");
 			return false;
 		}
 
@@ -87,7 +87,7 @@ public class Sekkeisyo {
 				String items[] = fileLine.split(",",-1);
 
 				if(!items[0].matches(format) || (items.length != 2)){
-					System.out.println(eM + "定義ファイルのフォーマットが不正です");
+					System.out.println(definition + "定義ファイルのフォーマットが不正です");
 					return false;
 				}
 
@@ -96,7 +96,7 @@ public class Sekkeisyo {
 			}
 
 		}catch(FileNotFoundException e){
-			System.out.println("支店定義ファイルが存在しません");
+			System.out.println(definition + "ファイルが存在しません");
 			return false;
 		}catch (IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
@@ -128,7 +128,7 @@ public class Sekkeisyo {
 		HashMap<String,String> commoditylst = new HashMap<String,String>();
 		HashMap<String,Long>commoditysale = new HashMap<String,Long>();
 
-		String dirPath = args[0];
+
 
 		//コマンドライン引数が二つ以上あった場合
 		if(args.length != 1){
@@ -141,6 +141,8 @@ public class Sekkeisyo {
 			System.out.println("予期せぬエラーが発生しました");
 			return;
 		}
+
+		String dirPath = args[0];
 
 		if (!fileIn(dirPath,"branch.lst","^\\d{3}$","支店",branchlst, branchsale)) {
 			return;
@@ -279,9 +281,4 @@ public class Sekkeisyo {
 		}
 	}
 }
-
-
-
-
-
 
